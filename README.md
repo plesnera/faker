@@ -1,4 +1,4 @@
-#SIMPLE FAKER
+# SIMPLE FAKER
 Project using the Python fake library to generate a fake CRM dataset based on existing and supplied user_ids and takes into consideration the local/Country code to ensure some alignment.
 It consists of the following functions:
 * load_crm_userdata - reads a csv file containing user_id and country_code.
