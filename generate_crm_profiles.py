@@ -27,7 +27,7 @@ def map_country_to_locale(locales: list, countries: list) -> dict:
     return locale_countries
 
 
-def generate_record(user: str, faker: Faker) -> DataFrame:
+def generate_record(user: str, faker: Faker) -> tuple:
     consent_types={0: 'None', 1: 'Newsletter', 2: 'Newsletter, Offers', 3: 'Newsletters, New Products', 4: 'Promotions',5: 'Newsletter, New Products, Promotions'}
     name = faker.name()
     address = faker.address()
@@ -38,23 +38,22 @@ def generate_record(user: str, faker: Faker) -> DataFrame:
     last_login=faker.date_between_dates(datetime.date(2009,6,14),datetime.datetime.now())
     clv = faker.random_number(digits=3)
     consent = consent_types[faker.random_int(0,5)]
-    return DataFrame({"user_id": [user], "name":[name], "address":[address], "city":[city], "country":[country], "email":[email], "date_of_birth": [date_of_birth],"last_login":[last_login],"clv":[clv],"consent":consent})
+    return (user,name,address,city,country,email,date_of_birth,last_login,clv,consent)
 
 
 def produce_fake_set(identity_dict: DataFrame, mapping_dict: dict) -> DataFrame:
     fakers = Faker(locale_list)
-    fake_crm_data=DataFrame()
+    fake_crm_data=list()
     # Lookup the locale matching
     for index, row in identity_dict.iterrows():
         locale=mapping_dict[row['geo_country']]
-        fake_row=generate_record(row['user_id'], fakers[locale])
-        fake_crm_data=fake_crm_data.append(fake_row)
-    return fake_crm_data
+        fake_crm_data.append(generate_record(row['user_id'], fakers[locale]))
+    return DataFrame(data=fake_crm_data, columns=["user_id", "name", "address", "city", "country", "email", "date_of_birth","last_login","clv","consent"])
 
 
 if __name__ == '__main__':
-    # country_list, identities = load_crm_data('100k_userids_m-29cc76b7.csv')
-    country_list, identities = load_crm_data('userid_sample.csv')
+    country_list, identities = load_crm_data('100k_userids_m-29cc76b7.csv')
+    # country_list, identities = load_crm_data('userid_sample.csv')
     mappings = map_country_to_locale(locale_list, country_list)
     fake_crm_data=produce_fake_set(identities, mappings)
     fake_crm_data.to_csv('fake_crm.csv',mode="w",index=False)
