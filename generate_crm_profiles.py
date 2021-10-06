@@ -79,15 +79,13 @@ if __name__ == '__main__':
 print('done')
 
 
-# Big query SQL used to extract user_id's:
-
-# select user_id, geo_country, count(*)
-# from `verdant-coyote-218213.momentum.beam_events`
+# # Big query SQL used to extract user_id's:
+# select app_user_id, geo_country, count(*)
+# from `verdant-coyote-218213.unum_ds_source_data.all_nov_dec`
 # where ymd between '20201203' and '20201210'
 # and user_id !='' and geo_country !=''
 # and app_id='m-29cc76b7'
 # and length(user_id)=33
-# group by user_id,geo_country
+# group by app_user_id,geo_country
 # having count(*)>1
-# order by count(*) desc
-# limit 100000
+# limit 500000
